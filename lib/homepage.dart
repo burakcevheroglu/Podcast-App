@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcastapp/const.dart';
+import 'package:podcastapp/podcastpage.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -8,11 +10,14 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          backgroundColor: appColors().backgroundColor,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+        ),
       ),
       extendBodyBehindAppBar: true,
       backgroundColor: appColors().backgroundColor,
@@ -132,16 +137,16 @@ class RecentlyPodcastTile extends StatelessWidget {
   }
 }
 
-class TrendingPodcastsWidget extends StatelessWidget {
+class TrendingPodcastsWidget extends ConsumerWidget {
   const TrendingPodcastsWidget({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
-      height: 180,
+      height: 190,
       child: ListView.builder(
         itemCount: podcasts.length,
         scrollDirection: Axis.horizontal,
@@ -152,19 +157,26 @@ class TrendingPodcastsWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  height: 130,
-                  width: 130,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: appColors().foregroundColor,
-                      image: DecorationImage(
-                          image: AssetImage(podcasts[key]!))),
+                InkWell(
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PodcastPage(index: index,)));
+                    ref.watch(indexStateProvider.notifier).update((state) => index);
+                  },
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    height: 130,
+                    width: 130,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: appColors().foregroundColor,
+                        image: DecorationImage(
+                            image: AssetImage(podcasts[key]!))),
+                  ),
                 ),
                 const SizedBox(height: 10,),
                 SizedBox(
                     width: 110,
-                    height: 40,
+                    height: 50,
                     child: Text(
                       key,
                       maxLines: 2,
