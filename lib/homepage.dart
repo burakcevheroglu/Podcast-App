@@ -12,6 +12,7 @@ class MyHomePage extends StatelessWidget {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
       backgroundColor: appColors().backgroundColor,
@@ -24,7 +25,7 @@ class MyHomePage extends StatelessWidget {
               const AppBarRow(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children:  const [
                   SizedBox(
                     height: 40,
                   ),
@@ -46,15 +47,85 @@ class MyHomePage extends StatelessWidget {
                   SizedBox(
                     height: 30,
                   ),
-                  HeaderRow(title: "Trending Podcasts"),
+                  HeaderRow(title: "Trending podcasts"),
                   SizedBox(
                     height: 10,
                   ),
-                  TrendingPodcastsWidget()
+                  TrendingPodcastsWidget(),
+                  SizedBox(height: 30,),
+                  HeaderRow(title: "Recently played"),
+                  SizedBox(height: 10,),
+                  RecentlyPodcastTile(index: 6, episode: 2, minsLeft: 35),
+                  RecentlyPodcastTile(index: 3, episode: 4, minsLeft: 18),
+                  RecentlyPodcastTile(index: 8, episode: 7, minsLeft: 22)
                 ],
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class RecentlyPodcastTile extends StatelessWidget {
+  const RecentlyPodcastTile({
+    super.key, required this.index, required this.episode, required this.minsLeft
+  });
+
+  final int index;
+  final int episode;
+  final int minsLeft;
+
+
+  @override
+  Widget build(BuildContext context) {
+    String title = podcasts.keys.elementAt(index);
+    String imagePath = podcasts[title]!;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: Container(
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              height: 100,
+              width: 100,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+                image: DecorationImage(
+                  image: AssetImage(imagePath)
+                )
+              ),
+            ),
+            const SizedBox(width: 10,),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(title,maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white),),
+                  const SizedBox(height: 10,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Episode ${episode.toString()}', style: const TextStyle(color: Colors.white70),),
+                      Row(
+                        children:  [
+                          const Icon(Icons.access_time_outlined, color: Colors.grey,),
+                          const SizedBox(width: 5,),
+                          Text("${minsLeft.toString()} mins left", style: const TextStyle(color: Colors.grey),)
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -77,7 +148,7 @@ class TrendingPodcastsWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           String key = podcasts.keys.elementAt(index);
           return Padding(
-            padding: (index!=podcasts.length-1) ? EdgeInsets.only(right: 25.0) : EdgeInsets.zero,
+            padding: (index!=podcasts.length-1) ? const EdgeInsets.only(right: 25.0) : EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
