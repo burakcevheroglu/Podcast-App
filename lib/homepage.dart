@@ -15,47 +15,43 @@ class MyHomePage extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       backgroundColor: appColors().backgroundColor,
-      body: SafeArea(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(30.0) + const EdgeInsets.only(top: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              const AppBarRow(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
-                  appbarButton(icon: Icons.search,),
-                  Text('podworld',style: TextStyle(fontSize: 24, color: Colors.white),),
-                  appbarButton(icon: Icons.menu,),
-                ],
-              ),
-              const SizedBox(height: 40,),
-              const Text('Categories',style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),),
-              const SizedBox(height: 10,),
-              Container(
-                width: double.infinity,
-                height: 100,
-                child: ListView.builder(
-                  itemCount: appCategories.length,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index){
-                    String key = appCategories.keys.elementAt(index);
-                    return SingleCategory(title: key, icon: appCategories[key]!);
-                  },
-                )
-              ),
-              const SizedBox(height: 20,),
-              AspectRatio(
-                aspectRatio: 5/3,
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: appColors().foregroundColor,
-                    borderRadius: BorderRadius.circular(10),
+                  SizedBox(
+                    height: 40,
                   ),
-
-
-                ),
+                  Text(
+                    'Categories',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CategoriesListView(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Banner(),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  HeaderRow(title: "Trending Podcasts"),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TrendingPodcastsWidget()
+                ],
               )
             ],
           ),
@@ -65,10 +61,149 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class SingleCategory extends StatelessWidget {
-  SingleCategory({
-    super.key, required this.title, required this.icon
+class TrendingPodcastsWidget extends StatelessWidget {
+  const TrendingPodcastsWidget({
+    super.key,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: 180,
+      child: ListView.builder(
+        itemCount: podcasts.length,
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          String key = podcasts.keys.elementAt(index);
+          return Padding(
+            padding: (index!=podcasts.length-1) ? EdgeInsets.only(right: 25.0) : EdgeInsets.zero,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 130,
+                  width: 130,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: appColors().foregroundColor,
+                      image: DecorationImage(
+                          image: AssetImage(podcasts[key]!))),
+                ),
+                const SizedBox(height: 10,),
+                SizedBox(
+                    width: 110,
+                    height: 40,
+                    child: Text(
+                      key,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.normal, fontSize: 15),
+                    ))
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class AppBarRow extends StatelessWidget {
+  const AppBarRow({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: const [
+        AppbarButton(
+          icon: Icons.search,
+        ),
+        Text(
+          'podworld',
+          style: TextStyle(fontSize: 24, color: Colors.white),
+        ),
+        AppbarButton(
+          icon: Icons.menu,
+        ),
+      ],
+    );
+  }
+}
+
+class HeaderRow extends StatelessWidget {
+  const HeaderRow({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const Text(
+          'See All',
+          style: TextStyle(color: Colors.white70),
+        )
+      ],
+    );
+  }
+}
+
+class CategoriesListView extends StatelessWidget {
+  const CategoriesListView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: double.infinity,
+        height: 100,
+        child: ListView.builder(
+          itemCount: appCategories.length,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            String key = appCategories.keys.elementAt(index);
+            return SingleCategory(title: key, icon: appCategories[key]!);
+          },
+        ));
+  }
+}
+
+class Banner extends StatelessWidget {
+  const Banner({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 5 / 3,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: appColors().foregroundColor,
+          image: const DecorationImage(
+              image: AssetImage("lib/assets/banner.png"), fit: BoxFit.fill),
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+}
+
+class SingleCategory extends StatelessWidget {
+  const SingleCategory({super.key, required this.title, required this.icon});
 
   final String title;
   final String icon;
@@ -80,7 +215,7 @@ class SingleCategory extends StatelessWidget {
       child: Column(
         children: [
           InkWell(
-            onTap: (){},
+            onTap: () {},
             borderRadius: BorderRadius.circular(15),
             child: Container(
               height: 70,
@@ -89,28 +224,37 @@ class SingleCategory extends StatelessWidget {
                 color: appColors().foregroundColor,
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Center(child: Text(icon, style: const TextStyle(fontSize: 30),),),
+              child: Center(
+                child: Text(
+                  icon,
+                  style: const TextStyle(fontSize: 30),
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 5,),
-           Expanded(child:  Text(title , style: const TextStyle(color: Colors.white, fontSize: 16),)),
+          const SizedBox(
+            height: 5,
+          ),
+          Expanded(
+              child: Text(
+            title,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          )),
         ],
       ),
     );
   }
 }
 
-class appbarButton extends StatelessWidget {
-  const appbarButton({
-    super.key, required this.icon
-  });
+class AppbarButton extends StatelessWidget {
+  const AppbarButton({super.key, required this.icon});
 
   final IconData icon;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){},
+      onTap: () {},
       borderRadius: BorderRadius.circular(15),
       child: Container(
         height: 50,
@@ -122,7 +266,12 @@ class appbarButton extends StatelessWidget {
             width: 2.5,
           ),
         ),
-        child: Center(child: Icon(icon, color: Colors.white70,),),
+        child: Center(
+          child: Icon(
+            icon,
+            color: Colors.white70,
+          ),
+        ),
       ),
     );
   }

@@ -10,6 +10,20 @@ Map<String, String> appCategories = {
   "Art" : "🎨",
   "Sport" : "🏀",
   "Cook" : "🍔",
-  "Meditation" : "🧘🏼‍♀️",
+  "Medit" : "🧘🏼‍♀️",
   "Books" : "📚",
+  "Language" : "🇪🇸"
+};
+
+Map<String, String> podcasts = {
+  "Dateline NBC" : "lib/assets/podcasts/dateline.jpeg",
+  "Nature Podcast" : "lib/assets/podcasts/naturepodcast.png",
+  "Speak Better English with Harry" : "lib/assets/podcasts/speakbetterenglish.jpeg",
+  "Life Kit" : "lib/assets/podcasts/lifekit.jpeg",
+  "Lex Friedman Podcast" : "lib/assets/podcasts/lexfriedman.jpeg",
+  "The Jordan B. Peterson Podcast" : "lib/assets/podcasts/jordanpeterson.jpeg",
+  "Duolingo Spanish Podcast" : "lib/assets/podcasts/duolingospanish.png",
+  "TED Talks Daily" : "lib/assets/podcasts/tedtalksdaily.png",
+  "Stuff You Should Know" : "lib/assets/podcasts/stuffyoushouldknow.jpeg",
+  "Planet Money" : "lib/assets/podcasts/planetmoney.png",
 };
