@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcastapp/const.dart';
+import 'package:podcastapp/episodepage.dart';
 
 final indexStateProvider = StateProvider<int>((ref) => 0);
 var initComplated = false;
@@ -25,6 +26,9 @@ class PodcastPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(podcasts.keys.elementAt(currentIndex)),
       ),
       body: Column(
@@ -32,115 +36,148 @@ class PodcastPage extends ConsumerWidget {
           const SizedBox(
             height: 40,
           ),
-          Container(
-            width: double.infinity,
-            height: areaHeight,
-            //color: Colors.red,
-            child: Stack(
-              children: [
-                (currentIndex == 0)
-                    ? const SizedBox()
-                    : Positioned(
-                        top: (areaHeight - (sideHeight)) / 2,
-                        left: -areaHeight / 4,
-                        child: InkWell(
-                          onTap: () =>
-                              ref.read(indexStateProvider.notifier).state--,
-                          child: Container(
-                            height: sideHeight,
-                            width: sideHeight,
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                image: DecorationImage(
-                                    image: AssetImage(podcasts.values
-                                        .elementAt(currentIndex - 1)))),
-                            child: Expanded(
-                              child: Container(
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                Positioned(
-                  left: (areaWidth - areaHeight) / 2,
-                  child: Container(
-                    height: areaHeight,
-                    width: areaHeight,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                podcasts.values.elementAt(currentIndex)))),
-                  ),
-                ),
-                (currentIndex > podcasts.length - 2)
-                    ? const SizedBox()
-                    : Positioned(
-                        top: (areaHeight - (sideHeight)) / 2,
-                        right: -areaHeight / 4,
-                        child: InkWell(
-                          onTap: () =>
-                              ref.read(indexStateProvider.notifier).state++,
-                          child: Container(
-                            height: sideHeight,
-                            width: sideHeight,
-                            decoration: BoxDecoration(
-                                color: Colors.black,
-                                image: DecorationImage(
-                                    image: AssetImage(podcasts.values
-                                        .elementAt(currentIndex + 1)))),
-                            child: Expanded(
-                              child: Container(
-                                color: Colors.black45,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-              ],
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          Text(
-            podcasts.keys.elementAt(ref.watch(indexStateProvider)),
-            style: const TextStyle(color: Colors.white, fontSize: 20),
-          ),
-          Text(
-            ref.watch(indexStateProvider).toString(),
-            style: const TextStyle(color: Colors.white, fontSize: 20),
-          ),
+          PodcastsWidget(
+              areaHeight: areaHeight,
+              currentIndex: ref.read(indexStateProvider),
+              sideHeight: sideHeight,
+              areaWidth: areaWidth),
           const SizedBox(
             height: 20,
           ),
-          makeStars(2),
-          const SizedBox(
-            height: 20,
-          ),
-          EpisodeTileWidget(currentIndex: currentIndex),
-          EpisodeTileWidget(currentIndex: currentIndex),
-          EpisodeTileWidget(currentIndex: currentIndex),
-
+          Expanded(
+              flex: 9,
+              child: ListView.builder(
+                itemCount: (ref.watch(indexStateProvider)*7%5)+2,
+                itemBuilder: (context, index) {
+                  return EpisodeTileWidget(episodeIndex: index+1,duration: ((index+1)*7%9)*3+11,);
+                },
+              )),
         ],
       ),
     );
   }
 }
 
-class EpisodeTileWidget extends StatelessWidget {
-  const EpisodeTileWidget({
+class PodcastsWidget extends ConsumerWidget {
+  const PodcastsWidget({
     super.key,
+    required this.areaHeight,
     required this.currentIndex,
+    required this.sideHeight,
+    required this.areaWidth,
   });
 
+  final double areaHeight;
   final int currentIndex;
+  final double sideHeight;
+  final double areaWidth;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    int currentIndex = ref.read(indexStateProvider);
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          height: areaHeight,
+          //color: Colors.red,
+          child: Stack(
+            children: [
+              (currentIndex == 0)
+                  ? const SizedBox()
+                  : Positioned(
+                      top: (areaHeight - (sideHeight)) / 2,
+                      left: -areaHeight / 4,
+                      child: InkWell(
+                        onTap: () =>
+                            ref.read(indexStateProvider.notifier).state--,
+                        child: Container(
+                          height: sideHeight,
+                          width: sideHeight,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              image: DecorationImage(
+                                  image: AssetImage(podcasts.values
+                                      .elementAt(currentIndex - 1)))),
+                          child: Expanded(
+                            child: Container(
+                              color: Colors.black45,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+              Positioned(
+                left: (areaWidth - areaHeight) / 2,
+                child: Container(
+                  height: areaHeight,
+                  width: areaHeight,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      image: DecorationImage(
+                          image: AssetImage(
+                              podcasts.values.elementAt(currentIndex)))),
+                ),
+              ),
+              (currentIndex > podcasts.length - 2)
+                  ? const SizedBox()
+                  : Positioned(
+                      top: (areaHeight - (sideHeight)) / 2,
+                      right: -areaHeight / 4,
+                      child: InkWell(
+                        onTap: () =>
+                            ref.read(indexStateProvider.notifier).state++,
+                        child: Container(
+                          height: sideHeight,
+                          width: sideHeight,
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              image: DecorationImage(
+                                  image: AssetImage(podcasts.values
+                                      .elementAt(currentIndex + 1)))),
+                          child: Expanded(
+                            child: Container(
+                              color: Colors.black45,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+            ],
+          ),
+        ),
+        const SizedBox(
+          height: 30,
+        ),
+        Text(
+          podcasts.keys.elementAt(ref.watch(indexStateProvider)),
+          style: const TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        Text(
+          ref.watch(indexStateProvider).toString(),
+          style: const TextStyle(color: Colors.white, fontSize: 20),
+        ),
+        const SizedBox(
+          height: 20,
+        ),
+        makeStars(ref.watch(indexStateProvider)),
+      ],
+    );
+  }
+}
+
+class EpisodeTileWidget extends ConsumerWidget {
+  const EpisodeTileWidget(
+      {super.key, required this.episodeIndex, required this.duration});
+
+  final int episodeIndex;
+  final int duration;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0) + const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0) +
+          const EdgeInsets.only(bottom: 10),
       child: Container(
         width: double.infinity,
         height: 80,
@@ -165,7 +202,7 @@ class EpisodeTileWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(100),
                       image: DecorationImage(
                           image: AssetImage(
-                              podcasts.values.elementAt(currentIndex)))),
+                              podcasts.values.elementAt(ref.watch(indexStateProvider))))),
                   child: Center(
                     child: Container(
                       height: 35,
@@ -173,10 +210,10 @@ class EpisodeTileWidget extends StatelessWidget {
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(50),
                           color: appColors().foregroundColor),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          "1",
-                          style: TextStyle(
+                          episodeIndex.toString(),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
@@ -195,9 +232,9 @@ class EpisodeTileWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Episode 1',
-                          style: TextStyle(
+                        Text(
+                          'Episode ${episodeIndex.toString()}',
+                          style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: 16),
@@ -213,9 +250,9 @@ class EpisodeTileWidget extends StatelessWidget {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              '16 mins',
-                              style: TextStyle(
-                                  color: Colors.grey.withAlpha(200)),
+                              '${duration.toString()} mins',
+                              style:
+                                  TextStyle(color: Colors.grey.withAlpha(200)),
                             )
                           ],
                         )
@@ -227,14 +264,18 @@ class EpisodeTileWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.only(right: 15.0),
-              child: Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                    color: appColors().backgroundColor,
-                    borderRadius: BorderRadius.circular(100)
+              child: InkWell(
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EpisodePage(index: ref.watch(indexStateProvider), episode: episodeIndex, duration: duration))),
+                child: Container(
+                  height: 50,
+                  width: 50,
+                  decoration: BoxDecoration(
+                      color: appColors().backgroundColor,
+                      borderRadius: BorderRadius.circular(100)),
+                  child: const Center(
+                    child: Icon(Icons.play_arrow),
+                  ),
                 ),
-                child: Center(child: Icon(Icons.play_arrow),),
               ),
             )
           ],
@@ -245,6 +286,8 @@ class EpisodeTileWidget extends StatelessWidget {
 }
 
 Widget makeStars(int stars) {
+  stars = stars*17%5+1;
+
   return Row(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

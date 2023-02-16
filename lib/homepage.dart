@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcastapp/const.dart';
 import 'package:podcastapp/podcastpage.dart';
+import 'package:podcastapp/settings.dart';
 
 class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -205,6 +206,7 @@ class AppBarRow extends StatelessWidget {
       children: const [
         AppbarButton(
           icon: Icons.search,
+          page: 0,
         ),
         Text(
           'podworld',
@@ -212,12 +214,12 @@ class AppBarRow extends StatelessWidget {
         ),
         AppbarButton(
           icon: Icons.menu,
+          page: 1
         ),
       ],
     );
   }
 }
-
 class HeaderRow extends StatelessWidget {
   const HeaderRow({super.key, required this.title});
 
@@ -330,14 +332,19 @@ class SingleCategory extends StatelessWidget {
 }
 
 class AppbarButton extends StatelessWidget {
-  const AppbarButton({super.key, required this.icon});
+  const AppbarButton({super.key, required this.icon, required this.page});
 
   final IconData icon;
+  final int page;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: (){
+        if(page==1){
+             Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+        }
+      },
       borderRadius: BorderRadius.circular(15),
       child: Container(
         height: 50,
