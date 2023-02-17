@@ -8,7 +8,7 @@ class AllRecentlyPlayed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appColors().foregroundColor,
+      backgroundColor: appColors().backgroundColor,
       appBar: AppBar(
         title: const Text(
           "Recently Played",
@@ -21,11 +21,12 @@ class AllRecentlyPlayed extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: ListView.builder(
+            padding: const EdgeInsets.only(top: 20),
             itemCount: podcasts.length,
             itemBuilder: (context, index){
               return RecentlyPodcastTile(index: index, episode: index*17%5+1, minsLeft: index*19%9+10);

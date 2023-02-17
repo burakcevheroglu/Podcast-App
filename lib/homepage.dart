@@ -32,7 +32,7 @@ class MyHomePage extends ConsumerWidget {
       backgroundColor: appColors().backgroundColor,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0) + const EdgeInsets.only(top: 40),
+          padding: const EdgeInsets.all(20.0) + const EdgeInsets.only(top: 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -107,6 +107,9 @@ class SearchBarWidget extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'Search the Podcast',
             prefixIcon: const Icon(Icons.search),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: appColors().orangeColor),
+            ),
             suffixIcon: IconButton(onPressed: (){
               ref.read(_searchBar.notifier).update((state) => 0);
               _searchBarSubmit(context, ref);
@@ -148,6 +151,10 @@ class RecentlyPodcastTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: appColors().foregroundColor
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -179,7 +186,8 @@ class RecentlyPodcastTile extends StatelessWidget {
                           children:  [
                             const Icon(Icons.access_time_outlined, color: Colors.grey,),
                             const SizedBox(width: 5,),
-                            Text("${minsLeft.toString()} mins left", style: const TextStyle(color: Colors.grey),)
+                            Text("${minsLeft.toString()} mins left", style: const TextStyle(color: Colors.grey),),
+                            const SizedBox(width: 10,),
                           ],
                         )
                       ],
@@ -202,7 +210,7 @@ class TrendingPodcastsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 210,
       child: ListView.builder(
@@ -334,7 +342,7 @@ class CategoriesListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: double.infinity,
         height: 100,
         child: ListView.builder(
@@ -424,9 +432,11 @@ class AppbarButton extends ConsumerWidget {
     return InkWell(
       onTap: (){
         if(page==0){
-          if(ref.read(_searchBar)==0) ref.read(_searchBar.notifier).update((state) => 60);
-          else ref.read(_searchBar.notifier).update((state) => 0);
-          print(ref.read(_searchBar));
+          if(ref.read(_searchBar)==0) {
+            ref.read(_searchBar.notifier).update((state) => 60);
+          } else {
+            ref.read(_searchBar.notifier).update((state) => 0);
+          }
         }
         else if(page==1){
              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
@@ -457,7 +467,6 @@ class AppbarButton extends ConsumerWidget {
 void _searchBarSubmit(BuildContext context, WidgetRef ref){
   for(int i=0; i<podcasts.length;i++){
       String podcastName = podcasts.keys.elementAt(i);
-      print("name: |"+ _searchBarText.text +"|");
 
 
       if(i==podcasts.length-1 || _searchBarText.text==""){

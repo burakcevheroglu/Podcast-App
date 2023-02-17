@@ -19,12 +19,9 @@ class PodcastPage extends ConsumerWidget {
 
     int currentIndex = ref.read(indexStateProvider);
 
-    ref.listen<int>(indexStateProvider, (previous, current) {
-      print('New state is $previous -> $current');
-      print('Current: ' + currentIndex.toString());
-    });
 
     return Scaffold(
+      backgroundColor: appColors().foregroundColor2,
       appBar: AppBar(
         surfaceTintColor: Colors.transparent,
         backgroundColor: Colors.transparent,
@@ -79,7 +76,7 @@ class PodcastsWidget extends ConsumerWidget {
     int currentIndex = ref.read(indexStateProvider);
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: areaHeight,
           //color: Colors.red,
@@ -299,12 +296,12 @@ Widget makeStars(int stars) {
       for (int i = 0; i < stars; i++)
         Icon(
           Icons.star,
-          color: Colors.yellow.withAlpha(255),
+          color: appColors().orangeColor,
         ),
       for (int i = 0; i < 5 - stars; i++)
         Icon(
           Icons.star,
-          color: Colors.yellow.withAlpha(80),
+          color: appColors().orangeColor.withAlpha(100),
         ),
     ],
   );

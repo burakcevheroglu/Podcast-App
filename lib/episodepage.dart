@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:podcastapp/const.dart';
 
-final playing = StateProvider<bool>((ref) => false);
+final playing = AutoDisposeStateProvider<bool>((ref) => false);
+final restart = StateProvider<bool>((ref) => false);
+final progressIndicatorProvider = AutoDisposeStateProvider<int>((ref) => 10);
 
 class EpisodePage extends ConsumerWidget {
   const EpisodePage({Key? key, required  this.index, required this.episode, required this.duration}) : super(key: key);
@@ -14,10 +18,8 @@ class EpisodePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    int progressIndicator = 70;
-
     return Scaffold(
-      backgroundColor: appColors().foregroundColor,
+      backgroundColor: appColors().foregroundColor2,
       appBar: AppBar(title: const Text(
         'podworld',
         style: TextStyle(fontSize: 24, color: Colors.white),
@@ -26,7 +28,7 @@ class EpisodePage extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           children: [
@@ -52,12 +54,12 @@ class EpisodePage extends ConsumerWidget {
                   const SizedBox(height: 20,),
                   Text('Episode ${episode.toString()}', style: const TextStyle(color: Colors.white60, fontSize: 16),),
                   const SizedBox(height: 30,),
-                  ProgressIndicatorWidget(progressIndicator: progressIndicator),
+                  const ProgressIndicatorWidget(),
                   const SizedBox(height: 10,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children:  [
-                      const Text('2 mins', style: TextStyle(color: Colors.white60, fontSize: 14),),
+                      Text('${duration-(ref.watch(progressIndicatorProvider)/1000*duration).toInt()} mins left', style: const TextStyle(color: Colors.white60, fontSize: 14),),
                       Text('${duration.toString()} mins', style: const TextStyle(color: Colors.white60, fontSize: 14),),
                     ],
                   ),
@@ -67,7 +69,34 @@ class EpisodePage extends ConsumerWidget {
                     children: [
                       IconButton(onPressed: (){}, icon: const Icon(Icons.nightlight_outlined),iconSize: 30,),
                       IconButton(onPressed: (){}, icon: const Icon(Icons.skip_previous_outlined),iconSize: 30,),
-                      IconButton(onPressed: () => ref.watch(playing.notifier).update((state) => !state), icon: Icon((ref.watch(playing)) ? Icons.play_arrow : Icons.pause),iconSize: 60,),
+                      IconButton(onPressed: () {
+                        final periodicTimer = Timer.periodic(
+                          const Duration(milliseconds: 5),
+                              (timer) {
+                                if(ref.read(progressIndicatorProvider)<1000 && ref.read(playing)){
+                                  ref.read(progressIndicatorProvider.notifier).update((state) => state+1);
+                                }
+                                else if(ref.read(progressIndicatorProvider)<1000 && !ref.read(playing)){
+                                  ref.read(playing.notifier).update((state) => false);
+                                  timer.cancel();
+                                }
+                                else if(ref.read(progressIndicatorProvider)>=1000 && ref.read(playing)){
+                                  if(ref.read(restart)){
+                                    ref.read(progressIndicatorProvider.notifier).update((state) => 0);
+                                    ref.read(playing.notifier).update((state) => true);
+                                    ref.read(restart.notifier).update((state) => false);
+                                  }
+                                  else{
+                                    ref.read(restart.notifier).update((state) => true);
+                                    ref.read(playing.notifier).update((state) => false);
+                                    timer.cancel();
+                                  }
+                                }
+                          },
+                        );
+                        ref.read(playing.notifier).update((state) => !state);
+                         periodicTimer;
+                      }, icon: Icon(!(ref.watch(playing)) ? Icons.play_arrow : Icons.pause),iconSize: 60,color: appColors().orangeColor,),
                       IconButton(onPressed: (){}, icon: const Icon(Icons.skip_next_outlined),iconSize: 30,),
                       IconButton(onPressed: (){}, icon: const Icon(Icons.repeat),iconSize: 30,),
                     ],
@@ -85,7 +114,11 @@ class EpisodePage extends ConsumerWidget {
                   height: 60,
                   width: 80,
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade600,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [appColors().orangeColor,appColors().purpleColor],
+                      ),
                     borderRadius: const BorderRadius.only(bottomRight: Radius.circular(20), topRight: Radius.circular(20)),
                   ),
                   child: const Center(child: Icon(Icons.navigate_before, size: 50,),),
@@ -94,7 +127,11 @@ class EpisodePage extends ConsumerWidget {
                   height: 60,
                   width: 80,
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade600,
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [appColors().orangeColor,appColors().purpleColor],
+                      ),
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
                   ),
                   child: const Center(child: Icon(Icons.navigate_next, size: 50,),),
@@ -108,16 +145,14 @@ class EpisodePage extends ConsumerWidget {
   }
 }
 
-class ProgressIndicatorWidget extends StatelessWidget {
+class ProgressIndicatorWidget extends ConsumerWidget {
   const ProgressIndicatorWidget({
     super.key,
-    required this.progressIndicator,
   });
-
-  final int progressIndicator;
+  
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       width: double.infinity,
       clipBehavior: Clip.hardEdge,
@@ -128,14 +163,19 @@ class ProgressIndicatorWidget extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(flex: progressIndicator,child: Container(decoration: BoxDecoration(
+          Expanded(flex: ref.watch(progressIndicatorProvider),child: Container(decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.orange.shade400,Colors.orange.shade900],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [appColors().orangeColor,appColors().purpleColor],
             )
           ),),),
-          Expanded(flex: (100-progressIndicator),child: Container(),),
+          Expanded(flex: (1000-ref.watch(progressIndicatorProvider)),child: Container(),),
         ],
       ),
     );
   }
 }
+
+
+

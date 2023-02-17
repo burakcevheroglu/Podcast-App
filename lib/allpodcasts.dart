@@ -23,9 +23,10 @@ class AllPodcasts extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double .infinity,
-        color: appColors().foregroundColor,
+        color: appColors().foregroundColor2,
         child: GridView(
           scrollDirection: Axis.vertical,
+          padding: const EdgeInsets.only(top: 20),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 10,

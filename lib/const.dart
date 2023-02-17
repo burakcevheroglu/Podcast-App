@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 class appColors{
   Color backgroundColor = const Color.fromARGB(255, 15, 16, 21);
   Color foregroundColor = const Color.fromARGB(255, 30, 31, 26);
+  Color foregroundColor2 = const Color.fromARGB(255, 27, 26, 21);
+  Color purpleColor = const Color.fromARGB(255, 194, 92, 211);
+  Color orangeColor = const Color.fromARGB(255, 225, 130, 82);
 }
 
 Map<String, String> appCategories = {
