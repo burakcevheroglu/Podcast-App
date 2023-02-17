@@ -21,7 +21,7 @@ class AllRecentlyPlayed extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SizedBox(
           width: double.infinity,
           height: double.infinity,

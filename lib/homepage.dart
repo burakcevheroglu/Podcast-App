@@ -72,7 +72,7 @@ class MyHomePage extends ConsumerWidget {
                   HeaderRow(title: "Recently played", seeAll: 1,),
                   SizedBox(height: 10,),
                   RecentlyPodcastTile(index: 6, episode: 2, minsLeft: 35),
-                  RecentlyPodcastTile(index: 3, episode: 4, minsLeft: 18),
+                  RecentlyPodcastTile(index: 7, episode: 4, minsLeft: 18),
                   RecentlyPodcastTile(index: 8, episode: 7, minsLeft: 22)
                 ],
               )
@@ -101,7 +101,6 @@ class SearchBarWidget extends ConsumerWidget {
       child:  Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 5),
         child: TextField(
-          autofocus: true,
           controller: _searchBarText,
           autocorrect: false,
           decoration: InputDecoration(
@@ -159,15 +158,19 @@ class RecentlyPodcastTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                height: 100,
-                width: 100,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-                  image: DecorationImage(
-                    image: AssetImage(imagePath)
-                  )
+              Hero(
+                tag: index,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+                    image: DecorationImage(
+                      image: AssetImage(imagePath),
+                      fit: BoxFit.fill
+                    )
+                  ),
                 ),
               ),
               const SizedBox(width: 10,),
@@ -248,14 +251,17 @@ class PodcastWithTextWidget extends ConsumerWidget {
             ref.watch(indexStateProvider.notifier).update((state) => index);
           },
           borderRadius: BorderRadius.circular(10),
-          child: Container(
-            height: edgeSize,
-            width: edgeSize,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: appColors().foregroundColor,
-                image: DecorationImage(
-                    image: AssetImage(podcasts.values.elementAt(index)))),
+          child: Hero(
+            tag: index,
+            child: Container(
+              height: edgeSize,
+              width: edgeSize,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: appColors().foregroundColor,
+                  image: DecorationImage(
+                      image: AssetImage(podcasts.values.elementAt(index)))),
+            ),
           ),
         ),
         const SizedBox(height: 10,),

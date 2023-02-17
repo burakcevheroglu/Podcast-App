@@ -90,17 +90,20 @@ class PodcastsWidget extends ConsumerWidget {
                       child: InkWell(
                         onTap: () =>
                             ref.read(indexStateProvider.notifier).state--,
-                        child: Container(
-                          height: sideHeight,
-                          width: sideHeight,
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              image: DecorationImage(
-                                  image: AssetImage(podcasts.values
-                                      .elementAt(currentIndex - 1)))),
-                          child: Expanded(
-                            child: Container(
-                              color: Colors.black45,
+                        child: Hero(
+                          tag: currentIndex-1,
+                          child: Container(
+                            height: sideHeight,
+                            width: sideHeight,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                image: DecorationImage(
+                                    image: AssetImage(podcasts.values
+                                        .elementAt(currentIndex - 1)))),
+                            child: Expanded(
+                              child: Container(
+                                color: Colors.black45,
+                              ),
                             ),
                           ),
                         ),
@@ -110,14 +113,17 @@ class PodcastsWidget extends ConsumerWidget {
                 left: (areaWidth - areaHeight) / 2,
                 child: InkWell(
                   onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EpisodePage(index: ref.read(indexStateProvider), episode: 1, duration: 32))),
-                  child: Container(
-                    height: areaHeight,
-                    width: areaHeight,
-                    decoration: BoxDecoration(
-                        color: Colors.blue,
-                        image: DecorationImage(
-                            image: AssetImage(
-                                podcasts.values.elementAt(currentIndex)))),
+                  child: Hero(
+                    tag: currentIndex,
+                    child: Container(
+                      height: areaHeight,
+                      width: areaHeight,
+                      decoration: BoxDecoration(
+                          color: appColors().foregroundColor2,
+                          image: DecorationImage(
+                              image: AssetImage(
+                                  podcasts.values.elementAt(currentIndex)))),
+                    ),
                   ),
                 ),
               ),
@@ -129,17 +135,20 @@ class PodcastsWidget extends ConsumerWidget {
                       child: InkWell(
                         onTap: () =>
                             ref.read(indexStateProvider.notifier).state++,
-                        child: Container(
-                          height: sideHeight,
-                          width: sideHeight,
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              image: DecorationImage(
-                                  image: AssetImage(podcasts.values
-                                      .elementAt(currentIndex + 1)))),
-                          child: Expanded(
-                            child: Container(
-                              color: Colors.black45,
+                        child: Hero(
+                          tag: currentIndex+1,
+                          child: Container(
+                            height: sideHeight,
+                            width: sideHeight,
+                            decoration: BoxDecoration(
+                                color: Colors.black,
+                                image: DecorationImage(
+                                    image: AssetImage(podcasts.values
+                                        .elementAt(currentIndex + 1)))),
+                            child: Expanded(
+                              child: Container(
+                                color: Colors.black45,
+                              ),
                             ),
                           ),
                         ),
