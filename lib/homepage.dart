@@ -8,11 +8,16 @@ import 'package:podcastapp/episodepage.dart';
 import 'package:podcastapp/podcastpage.dart';
 import 'package:podcastapp/settings.dart';
 
-class MyHomePage extends StatelessWidget {
+ 
+ final _searchBar = StateProvider<double>((ref) => 0);
+ TextEditingController _searchBarText= TextEditingController();
+
+class MyHomePage extends ConsumerWidget {
   const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0),
@@ -36,8 +41,10 @@ class MyHomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children:  const [
                   SizedBox(
-                    height: 40,
+                    height: 20,
                   ),
+                  SearchBarWidget(),
+                  SizedBox(height: 20,),
                   Text(
                     'Categories',
                     style: TextStyle(
@@ -71,6 +78,49 @@ class MyHomePage extends StatelessWidget {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class SearchBarWidget extends ConsumerWidget {
+  const SearchBarWidget({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AnimatedContainer(
+      width: double.infinity,
+      height: ref.watch(_searchBar),
+      color: appColors().foregroundColor,
+      clipBehavior: Clip.hardEdge,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastLinearToSlowEaseIn,
+      child:  Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 0,vertical: 5),
+        child: TextField(
+          autofocus: true,
+          controller: _searchBarText,
+          autocorrect: false,
+          decoration: InputDecoration(
+            hintText: 'Search the Podcast',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: IconButton(onPressed: (){
+              ref.read(_searchBar.notifier).update((state) => 0);
+              _searchBarSubmit(context, ref);
+            }, icon: const Icon(Icons.send)),
+            isCollapsed: false,
+          ),
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white
+          ),
+          onSubmitted: (String text){
+            ref.read(_searchBar.notifier).update((state) => 0);
+            _searchBarSubmit(context, ref);
+          },
         ),
       ),
     );
@@ -353,28 +403,32 @@ class SingleCategory extends StatelessWidget {
           const SizedBox(
             height: 5,
           ),
-          Expanded(
-              child: Text(
+          Text(
             title,
             style: const TextStyle(color: Colors.white, fontSize: 16),
-          )),
+          ),
         ],
       ),
     );
   }
 }
 
-class AppbarButton extends StatelessWidget {
+class AppbarButton extends ConsumerWidget {
   const AppbarButton({super.key, required this.icon, required this.page});
 
   final IconData icon;
   final int page;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
       onTap: (){
-        if(page==1){
+        if(page==0){
+          if(ref.read(_searchBar)==0) ref.read(_searchBar.notifier).update((state) => 60);
+          else ref.read(_searchBar.notifier).update((state) => 0);
+          print(ref.read(_searchBar));
+        }
+        else if(page==1){
              Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
         }
       },
@@ -399,3 +453,31 @@ class AppbarButton extends StatelessWidget {
     );
   }
 }
+
+void _searchBarSubmit(BuildContext context, WidgetRef ref){
+  for(int i=0; i<podcasts.length;i++){
+      String podcastName = podcasts.keys.elementAt(i);
+      print("name: |"+ _searchBarText.text +"|");
+
+
+      if(i==podcasts.length-1 || _searchBarText.text==""){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PodcastPage(index: podcasts.length-1,)));
+        ref.watch(indexStateProvider.notifier).update((state) => podcasts.length-1);
+        break;
+      }
+      if(podcastName.toLowerCase().replaceAll(" ", "") == _searchBarText.text.toLowerCase().replaceAll(" ", "")){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PodcastPage(index: i,)));
+        ref.watch(indexStateProvider.notifier).update((state) => i);
+        break;
+      }
+      else if(podcastName.toLowerCase().contains(_searchBarText.text.toLowerCase())){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => PodcastPage(index: i,)));
+        ref.watch(indexStateProvider.notifier).update((state) => i);
+        break;
+      }
+
+    }
+  _searchBarText.text="";
+}
+
+

@@ -44,14 +44,16 @@ class PodcastPage extends ConsumerWidget {
           const SizedBox(
             height: 20,
           ),
-          Expanded(
-              flex: 9,
-              child: ListView.builder(
-                itemCount: (ref.watch(indexStateProvider)*7%5)+2,
-                itemBuilder: (context, index) {
-                  return EpisodeTileWidget(episodeIndex: index+1,duration: ((index+1)*7%9)*3+11,);
-                },
-              )),
+          SizedBox(
+            height: 400,
+            width: double.infinity,
+            child: ListView.builder(
+              itemCount: (ref.watch(indexStateProvider)*7%5)+2,
+              itemBuilder: (context, index) {
+                return EpisodeTileWidget(episodeIndex: index+1,duration: ((index+1)*7%9)*3+11,);
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -109,14 +111,17 @@ class PodcastsWidget extends ConsumerWidget {
                     ),
               Positioned(
                 left: (areaWidth - areaHeight) / 2,
-                child: Container(
-                  height: areaHeight,
-                  width: areaHeight,
-                  decoration: BoxDecoration(
-                      color: Colors.blue,
-                      image: DecorationImage(
-                          image: AssetImage(
-                              podcasts.values.elementAt(currentIndex)))),
+                child: InkWell(
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => EpisodePage(index: ref.read(indexStateProvider), episode: 1, duration: 32))),
+                  child: Container(
+                    height: areaHeight,
+                    width: areaHeight,
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        image: DecorationImage(
+                            image: AssetImage(
+                                podcasts.values.elementAt(currentIndex)))),
+                  ),
                 ),
               ),
               (currentIndex > podcasts.length - 2)
