@@ -1,16 +1,28 @@
-# podcastapp
+# Podcast App
 
-A new Flutter project.
+I made podcast app and designed 6 different pages. Also riverpod state management used.
 
-## Getting Started
+## Screenshots
+### Main Screen
 
-This project is a starting point for a Flutter application.
+| First Screen       |  First Screen          |
+| ------------- |:-------------:|
+| <img src="screenshots/10.png" alt="Screenshot" width="300">     | <img src="screenshots/11.png" alt="Screenshot" width="300"> |
 
-A few resources to get you started if this is your first Flutter project:
+### See All Screens
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+| Trending Podcasts Screen       |  Recently Played Screen          |
+| ------------- |:-------------:|
+| <img src="screenshots/20.png" alt="Screenshot" width="300">     | <img src="screenshots/30.png" alt="Screenshot" width="300"> |
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Podcast Screen
+
+| Podcast  Screen       |  Podcast Screen          |
+| ------------- |:-------------:|
+| <img src="screenshots/40.png" alt="Screenshot" width="300">     | <img src="screenshots/41.png" alt="Screenshot" width="300"> |
+
+### Episode and Setting Screens
+
+| Episode  Screen       |  Settings Screen          |
+| ------------- |:-------------:|
+| <img src="screenshots/50.png" alt="Screenshot" width="300">     | <img src="screenshots/60.png" alt="Screenshot" width="300"> |
